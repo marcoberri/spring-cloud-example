@@ -10,3 +10,10 @@ spring:
  #Configurazione per il servizio di configurazione
   config :
    uri: http://localhost:8888/
+   
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+  instance:
+    preferIpAddress: true
