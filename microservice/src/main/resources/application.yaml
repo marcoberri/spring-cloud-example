@@ -1,0 +1,12 @@
+server:
+ port: 8090
+
+spring:
+ application:
+  name: ms
+
+
+ cloud :
+ #Configurazione per il servizio di configurazione
+  config :
+   uri: http://localhost:8888/

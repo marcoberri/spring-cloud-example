@@ -10,5 +10,6 @@
 
 	<modules>
 		<module>configserver</module>
+		<module>microservice</module>
 	</modules>
 </project>
