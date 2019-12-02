@@ -7,7 +7,7 @@ spring:
 
 
  cloud :
- #Configurazione per il servizio di configurazione
+ #Configurazione per il servizio di configurazione applicativa
   config :
    uri: http://localhost:8888/
    
