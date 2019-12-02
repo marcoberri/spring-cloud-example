@@ -11,12 +11,22 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.2.1.RELEASE</version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</parent>
-	
+
+	<properties>
+		<java.version>1.8</java.version>
+		<spring-cloud.version>Hoxton.RELEASE</spring-cloud.version>
+	</properties>
+
+
+
 	<modules>
 		<module>configserver</module>
 		<module>microservice</module>
-  	 	 <module>eureka</module>
-   		 <module>apigateway</module>
+		<module>eureka</module>
+		<module>apigateway</module>
+ 
+	<module></module> <module>admin</module>
   </modules>
 </project>

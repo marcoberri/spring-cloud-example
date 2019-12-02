@@ -6,11 +6,16 @@ server:
  port: 9090
  
  zuul:
+  ignoredServices: '*'
   ribbon:
     eager-load:
       enabled: true
+  routes:
+   product-service:
+    path: /product/**
+    serviceId: ms
+    stripPrefix: true
       
- 
  
 eureka:
  instance:
