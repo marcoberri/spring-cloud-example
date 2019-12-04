@@ -4,3 +4,7 @@ eureka:
   client:
     registerWithEureka: false
     fetchRegistry: false
+    
+spring:
+ zipkin:
+  baseUrl: http://localhost:9411/    

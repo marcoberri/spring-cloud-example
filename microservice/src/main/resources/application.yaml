@@ -4,7 +4,8 @@ server:
 spring:
  application:
   name: ms
-
+ zipkin:
+  baseUrl: http://localhost:9411/        
 
  cloud :
  #Configurazione per il servizio di configurazione applicativa
@@ -17,3 +18,4 @@ eureka:
       defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
   instance:
     preferIpAddress: true
+    

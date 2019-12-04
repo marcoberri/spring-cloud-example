@@ -26,7 +26,7 @@
 		<module>microservice</module>
 		<module>eureka</module>
 		<module>apigateway</module>
- 
-	<module></module> <module>admin</module>
+		<module>admin</module>
+    <module>zipkin</module>
   </modules>
 </project>
