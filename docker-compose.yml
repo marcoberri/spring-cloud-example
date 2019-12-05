@@ -1,0 +1,84 @@
+version: '3.7'
+
+services:
+  configserver:
+    image: config:1
+    build:
+      context: ./configserver
+      dockerfile: Dockerfile
+    volumes:
+      - /tmp/cloud
+    ports:
+      - "8888:8888"
+    restart: always
+    deploy:
+     resources:
+      limits: 
+       memory: 64mb
+      reservations:
+       memory: 64mb
+       
+  zipkin:
+    image: zipkin:1
+    build:
+      context: ./zipkin
+      dockerfile: Dockerfile
+    volumes:
+      - /tmp/cloud
+    ports:
+      - "9411:9411"
+    restart: always
+    deploy:
+     resources:
+      limits: 
+       memory: 64mb
+      reservations:
+       memory: 64mb       
+              
+  eureka:
+    image: eureka:1
+    build:
+      context: ./eureka
+      dockerfile: Dockerfile
+    volumes:
+      - /tmp/cloud
+    ports:
+      - "8761:8761"
+    restart: always
+    deploy:
+     resources:
+      limits: 
+       memory: 64mb
+      reservations:
+       memory: 64mb
+
+      
+  ms:
+    image: ms:1
+    build:
+      context: ./microservice
+      dockerfile: Dockerfile
+    volumes:
+      - /tmp/cloud
+    ports:
+      - "8090:8090"
+    depends_on:
+      - "configserver"
+      - "eureka"
+      - "zipkin"
+    restart: always
+    deploy:
+     resources:
+      limits: 
+       memory: 64mb
+      reservations:
+       memory: 64mb
+       
+
+       
+       
+# Networks to be created to facilitate communication between containers
+#networks:
+#  backend:
+#  frontend:       
+       
