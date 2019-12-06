@@ -2,13 +2,16 @@ server:
  port: 8090
 
 spring:
+ main:
+  lazy-initialization: true
  application:
   name: ms
+#ZipKin  
  zipkin:
-  baseUrl: http://localhost:9411/        
+  baseUrl: http://localhost:9411/
 
  cloud :
- #Config Server
+#Config Server
   config :
    uri: http://localhost:8888/
    fail-fast: true
@@ -18,7 +21,7 @@ spring:
 eureka:
   client:
     serviceUrl:
-      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+      defaultZone: http://localhost:8761/eureka
   instance:
     preferIpAddress: true
     

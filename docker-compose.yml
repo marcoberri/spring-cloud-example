@@ -1,6 +1,7 @@
 version: '3.7'
 
 services:
+
   configserver:
     image: config:1
     build:
@@ -10,6 +11,8 @@ services:
       - /tmp/cloud
     ports:
       - "8888:8888"
+    networks:
+     - backend
     restart: always
     deploy:
      resources:
@@ -26,7 +29,9 @@ services:
     volumes:
       - /tmp/cloud
     ports:
-      - "9411:9411"
+      - "9411"
+    networks:
+     - backend
     restart: always
     deploy:
      resources:
@@ -34,7 +39,7 @@ services:
        memory: 64mb
       reservations:
        memory: 64mb       
-              
+             
   eureka:
     image: eureka:1
     build:
@@ -44,6 +49,12 @@ services:
       - /tmp/cloud
     ports:
       - "8761:8761"
+    depends_on:
+      - "zipkin"      
+    environment:
+      - "SPRING_ZIPKIN_BASEURL=http://zipkin:9411/"
+    networks:
+     - backend
     restart: always
     deploy:
      resources:
@@ -62,10 +73,18 @@ services:
       - /tmp/cloud
     ports:
       - "8090:8090"
+    networks:
+     - backend      
     depends_on:
       - "configserver"
       - "eureka"
       - "zipkin"
+    # Pass environment variables to the service
+    environment:
+      - "EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka:8761/eureka"
+      - "CLOUD_CONFIG_URI=http://configserver:8888/"
+      - "SPRING_ZIPKIN_BASEURL=http://zipkin:9411/"
+      
     restart: always
     deploy:
      resources:
@@ -74,11 +93,7 @@ services:
       reservations:
        memory: 64mb
        
-
-       
-       
 # Networks to be created to facilitate communication between containers
-#networks:
-#  backend:
-#  frontend:       
+networks:
+  backend:       
        
