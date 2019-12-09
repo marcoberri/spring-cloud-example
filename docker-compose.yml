@@ -40,7 +40,7 @@ services:
       reservations:
        memory: 64mb       
              
-  eureka:
+  eureka-1:
     image: eureka:1
     build:
       context: ./eureka
@@ -52,7 +52,11 @@ services:
     depends_on:
       - "zipkin"      
     environment:
+      - "SERVER_PORT=8761"
       - "SPRING_ZIPKIN_BASEURL=http://zipkin:9411/"
+      - "CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-2:8762/eureka"
+      - "CLIENT_SERVICEURL_REGISTER-WITH-EUREKA=true"
+      - "CLIENT_SERVICEURL_FETCH-REGISTRY=true"
     networks:
      - backend
     restart: always
@@ -63,7 +67,36 @@ services:
       reservations:
        memory: 64mb
 
-      
+
+             
+  eureka-2:
+    image: eureka:1
+    build:
+      context: ./eureka
+      dockerfile: Dockerfile
+    volumes:
+      - /tmp/cloud
+    ports:
+      - "8762:8762"
+    depends_on:
+      - "zipkin"      
+    environment:
+      - "SERVER_PORT=8762"
+      - "SPRING_ZIPKIN_BASEURL=http://zipkin:9411/" 
+      - "CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-1:8761/eureka"
+      - "CLIENT_SERVICEURL_REGISTER-WITH-EUREKA=true"
+      - "CLIENT_SERVICEURL_FETCH-REGISTRY=true"
+    networks:
+     - backend
+    restart: always
+    deploy:
+     resources:
+      limits: 
+       memory: 64mb
+      reservations:
+       memory: 64mb
+    
+          
   ms:
     image: ms:1
     build:
