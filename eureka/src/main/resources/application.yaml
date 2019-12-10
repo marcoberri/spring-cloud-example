@@ -7,4 +7,19 @@ eureka:
     
 spring:
  zipkin:
-  baseUrl: http://localhost:9411/    
+  baseUrl: http://localhost:9411/
+  
+
+management:
+  endpoint:
+    health:
+      enabled: true
+      show-details: always
+    shutdown:
+      enabled: true
+  endpoints:
+    web:
+      base-path: /
+      # By default, only 'health' and 'info' are accessible via web
+      exposure:
+        include: '*'      

@@ -11,6 +11,8 @@ services:
       - /tmp/cloud
     ports:
       - "8888:8888"
+    environment:
+      - "SERVER_PORT=8888"         
     networks:
      - backend
     restart: always
@@ -30,6 +32,8 @@ services:
       - /tmp/cloud
     ports:
       - "9411"
+    environment:
+      - "SERVER_PORT=9411"      
     networks:
      - backend
     restart: always
@@ -54,9 +58,12 @@ services:
     environment:
       - "SERVER_PORT=8761"
       - "SPRING_ZIPKIN_BASEURL=http://zipkin:9411/"
-      - "CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-2:8762/eureka"
+      - "CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-1:8762/eureka,http://eureka-2:8761/eureka"
       - "CLIENT_SERVICEURL_REGISTER-WITH-EUREKA=true"
       - "CLIENT_SERVICEURL_FETCH-REGISTRY=true"
+      - "EUREKA_INSTANCE_HOSTNAME=eureka-1"
+      - "EUREKA_INSTANCE_APPNAME=eureka-cluster"
+      
     networks:
      - backend
     restart: always
@@ -83,9 +90,11 @@ services:
     environment:
       - "SERVER_PORT=8762"
       - "SPRING_ZIPKIN_BASEURL=http://zipkin:9411/" 
-      - "CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-1:8761/eureka"
+      - "CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-1:8762/eureka,http://eureka-2:8761/eureka"
       - "CLIENT_SERVICEURL_REGISTER-WITH-EUREKA=true"
       - "CLIENT_SERVICEURL_FETCH-REGISTRY=true"
+      - "EUREKA_INSTANCE_HOSTNAME=eureka-2"
+      - "EUREKA_INSTANCE_APPNAME=eureka-cluster"
     networks:
      - backend
     restart: always
@@ -110,14 +119,12 @@ services:
      - backend      
     depends_on:
       - "configserver"
-      - "eureka"
       - "zipkin"
-    # Pass environment variables to the service
     environment:
-      - "EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka:8761/eureka"
+      - "SERVER_PORT=8090"
+      - "EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-1:8761/eureka,http://eureka-2:8762/eureka"
       - "CLOUD_CONFIG_URI=http://configserver:8888/"
       - "SPRING_ZIPKIN_BASEURL=http://zipkin:9411/"
-      
     restart: always
     deploy:
      resources:
