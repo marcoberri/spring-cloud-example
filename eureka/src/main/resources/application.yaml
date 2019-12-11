@@ -1,13 +1,23 @@
 server:
-  port: 8761
+  port: ${SERVER_PORT:8761}
 eureka:
+  instance:
+   hostname: ${EUREKA_INSTANCE_HOSTNAME:eureka}
+   appname: ${EUREKA_INSTANCE_APPNAME:eureka-cluster}
+   shouldBatchReplication: true   
   client:
+    health-check:
+     enabled: true
     registerWithEureka: false
     fetchRegistry: false
-    
+    serviceUrl:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka}    
+  server:
+   enableSelfPreservation: false
+       
 spring:
  zipkin:
-  baseUrl: http://localhost:9411/
+  baseUrl: ${SPRING_ZIPKIN_BASEURL:http://localhost:9411/}
   
 
 management:

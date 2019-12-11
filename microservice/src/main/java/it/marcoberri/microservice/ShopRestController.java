@@ -1,9 +1,8 @@
 package it.marcoberri.microservice;
 
-import javax.websocket.server.PathParam;
-
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import it.marcoberri.microservice.model.Product;
 
@@ -11,7 +10,7 @@ import it.marcoberri.microservice.model.Product;
 public class ShopRestController {
 
 	@GetMapping(value = "/product/{sku}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Product getProductBySku(@PathParam("sku") String sku) {
+	public Product getProductBySku(@PathVariable("sku") String sku) {
 		Product product = new Product();
 		product.setSku(sku);
 		product.setName("Sample Name");
