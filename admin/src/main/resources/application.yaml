@@ -23,10 +23,5 @@ spring:
  boot:
   admin:
    client:
-    url: ${SPRING_BOOT_ADMIN_CLINET_URL://localhost:8080}  
-management:
- endpoints:
-  web: 
-   exposure: 
-   include: "*"     
+    url: ${SPRING_BOOT_ADMIN_CLINET_URL:http://localhost:8080}  
       

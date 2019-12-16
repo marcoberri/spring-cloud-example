@@ -2,7 +2,6 @@ version: '3.7'
 
 services:
 
-
   db:
     image: postgres:latest
     restart: always
@@ -234,7 +233,33 @@ services:
        memory: 32mb
       reservations:
        memory: 32mb
-       
+
+
+
+  admin:
+    image: admin:1
+    build:
+      context: ./admin
+      dockerfile: Dockerfile
+    volumes:
+      - /tmp/cloud
+    ports:
+      - "8081:8081"
+    environment:
+      SERVER_PORT : 8081
+      SPRING_BOOT_ADMIN_CLINET_URL: "http://admin:8081/"         
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-1:8761/eureka/,http://eureka-2:8762/eureka/"
+    networks:
+     - backend
+    restart: always
+    deploy:
+     resources:
+      limits: 
+       memory: 32mb
+      reservations:
+       memory: 32mb
+  
+         
 # Networks to be created to facilitate communication between containers
 networks:
   backend:       
