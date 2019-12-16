@@ -24,4 +24,6 @@ spring:
   admin:
    client:
     url: ${SPRING_BOOT_ADMIN_CLINET_URL:http://localhost:8080}  
+    username: demo
+    password: demo
       
