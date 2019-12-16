@@ -2,6 +2,19 @@ version: '3.7'
 
 services:
 
+
+  db:
+    image: postgres:latest
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=demo
+      - POSTGRES_USER=demo
+      - POSTGRES_PASSWORD=demo
+    volumes:
+      - postgres-data-volume:/var/lib/postgresql/data
+      
   configserver:
     image: config:1
     build:
@@ -19,9 +32,9 @@ services:
     deploy:
      resources:
       limits: 
-       memory: 64mb
+       memory: 32mb
       reservations:
-       memory: 64mb
+       memory: 32mb
        
   zipkin:
     image: zipkin:1
@@ -31,7 +44,7 @@ services:
     volumes:
       - /tmp/cloud
     ports:
-      - "9411"
+      - "9411:9411"
     environment:
       SERVER_PORT: 9411
     networks:
@@ -40,9 +53,9 @@ services:
     deploy:
      resources:
       limits: 
-       memory: 64mb
+       memory: 32mb
       reservations:
-       memory: 64mb       
+       memory: 32mb       
              
   eureka-1:
     image: eureka:1
@@ -70,9 +83,9 @@ services:
     deploy:
      resources:
       limits: 
-       memory: 64mb
+       memory: 32mb
       reservations:
-       memory: 64mb
+       memory: 32mb
 
 
              
@@ -101,9 +114,9 @@ services:
     deploy:
      resources:
       limits: 
-       memory: 64mb
+       memory: 32mb
       reservations:
-       memory: 64mb
+       memory: 32mb
 
 
  
@@ -123,7 +136,9 @@ services:
       - "zipkin"
       - "eureka-1"
       - "eureka-2"
-      - "ms"
+      - "ms0"
+      - "ms1"
+      - "ms2"
     environment:
       SERVER_PORT: 9090
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-1:8761/eureka/,http://eureka-2:8762/eureka/"
@@ -133,12 +148,12 @@ services:
     deploy:
      resources:
       limits: 
-       memory: 64mb
+       memory: 32mb
       reservations:
-       memory: 64mb
+       memory: 32mb
            
           
-  ms:
+  ms0:
     image: ms:1
     build:
       context: ./microservice
@@ -159,19 +174,72 @@ services:
        SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
     restart: always
     deploy:
-#     restart_policy:
-#       condition: on-failure
-#       delay: 5s
-#       max_attempts: 3    
-#     mode: replicated
-#     replicas: 6    
+     resources:
+      limits: 
+       memory: 32mb
+      reservations:
+       memory: 32mb
+
+  ms1:
+    image: ms:1
+    build:
+      context: ./microservice
+      dockerfile: Dockerfile
+    volumes:
+      - /tmp/cloud
+    ports:
+      - "8091"
+    networks:
+     - backend      
+    depends_on:
+      - "configserver"
+      - "zipkin"
+    environment:
+       SERVER_PORT: 8091
+       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-1:8761/eureka/,http://eureka-2:8762/eureka/"
+       CLOUD_CONFIG_URI: http://configserver:8888/
+       SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
+    restart: always
+    deploy:
      resources:
       limits: 
        memory: 64mb
       reservations:
        memory: 64mb
+
+
+  ms2:
+    image: ms:1
+    build:
+      context: ./microservice
+      dockerfile: Dockerfile
+    volumes:
+      - /tmp/cloud
+    ports:
+      - "8092"
+    networks:
+     - backend      
+    depends_on:
+      - "configserver"
+      - "zipkin"
+    environment:
+       SERVER_PORT: 8092
+       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-1:8761/eureka/,http://eureka-2:8762/eureka/"
+       CLOUD_CONFIG_URI: http://configserver:8888/
+       SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
+    restart: always
+    deploy:
+     resources:
+      limits: 
+       memory: 32mb
+      reservations:
+       memory: 32mb
        
 # Networks to be created to facilitate communication between containers
 networks:
   backend:       
+
+volumes:  
+ postgres-data-volume:
+  external: true
        
