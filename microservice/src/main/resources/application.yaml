@@ -14,7 +14,7 @@ spring:
  cloud :
 #Config Server
   config :
-   uri: http://localhost:8888/
+   uri: ${CLOUD_CONFIG_URI:http://localhost:8888/}
    fail-fast: true
    retry:
      max-attempts: 20   
@@ -26,3 +26,14 @@ eureka:
   instance:
     preferIpAddress: true
     
+
+security:
+ basic:
+  enable: false   
+management:
+ security:
+  enabled: false
+  
+service:
+ ms:
+  serviceId: ms

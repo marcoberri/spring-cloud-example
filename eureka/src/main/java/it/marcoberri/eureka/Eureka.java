@@ -10,9 +10,9 @@ import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 @EnableEurekaServer
-public class App {
+public class Eureka {
 	public static void main(String[] args) {
-		SpringApplication.run(App.class, args);
+		SpringApplication.run(Eureka.class, args);
 	}
 
 	@ConditionalOnMissingBean

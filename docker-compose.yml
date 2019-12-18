@@ -22,7 +22,7 @@ services:
     volumes:
       - /tmp/cloud
     ports:
-      - "8888:8888"
+      - "8889:8888"
     environment:
       SERVER_PORT : 8888         
     networks:
