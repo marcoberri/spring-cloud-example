@@ -1,5 +1,5 @@
 spring:
  application:
-  name: zipkin-server
+  name: zipkin
 server:
   port: ${SERVER_PORT:9411}

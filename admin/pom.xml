@@ -16,10 +16,6 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<properties>
-		<start-class>it.marcoberri.App</start-class>
-	</properties>
-
 	<dependencies>
 
 		<dependency>

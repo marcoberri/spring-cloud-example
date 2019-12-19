@@ -1,23 +1,25 @@
-package it.marcoberri;
+package it.marcoberri.apigateway;
 
 import java.util.Date;
 
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationFailedEvent;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.EventListener;
 
-import de.codecentric.boot.admin.server.config.EnableAdminServer;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-@Configuration
-@EnableAutoConfiguration
-@EnableAdminServer
-public class Admin {
+@SpringBootApplication
+@EnableZuulProxy
+@EnableDiscoveryClient
+@EnableSwagger2
+public class Gateway {
 	public static void main(String[] args) {
-		SpringApplication.run(Admin.class, args);
+		SpringApplication.run(Gateway.class, args);
 	}
 
 	/**

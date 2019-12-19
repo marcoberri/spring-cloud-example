@@ -1,4 +1,4 @@
-server:
+demo  server:
  port: ${SERVER_PORT:8085}
  
 eureka:   
@@ -29,4 +29,13 @@ spring:
     url: ${SPRING_BOOT_ADMIN_CLINET_URL:http://localhost:8081}  
     username: demo
     password: demo
+    instance:
+     metadata:
+      user:
+       name: ${spring.security.user.name}
+       password: ${spring.security.user.password}
+ security:
+  user:
+   name: demo
+   password: demo
       
