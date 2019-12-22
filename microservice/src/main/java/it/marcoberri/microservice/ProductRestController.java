@@ -17,7 +17,7 @@ import com.netflix.discovery.shared.Application;
 import it.marcoberri.microservice.model.Product;
 
 @org.springframework.web.bind.annotation.RestController
-public class ShopRestController {
+public class ProductRestController {
 
 	@Autowired
 	private EurekaClient eurekaClient;

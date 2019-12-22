@@ -11,254 +11,216 @@ services:
       - POSTGRES_DB=demo
       - POSTGRES_USER=demo
       - POSTGRES_PASSWORD=demo
+      - PG_SYSTEM_SHARED_BUFFERS=256MB
+      - PG_SYSTEM_MAX_CONNECTIONS=200
+    command: ["-c", "shared_buffers=256MB", "-c", "max_connections=200"]     
     volumes:
       - postgres-data-volume:/var/lib/postgresql/data
-      
-  configserver:
-    image: config:1
-    build:
-      context: ./configserver
-      dockerfile: Dockerfile
-    volumes:
-      - /tmp/cloud
-    ports:
-      - "8889:8888"
-    environment:
-      SERVER_PORT : 8888         
     networks:
-     - backend
-    restart: always
-    deploy:
-     resources:
-      limits: 
-       memory: 32mb
-      reservations:
-       memory: 32mb
-       
-  zipkin:
-    image: zipkin:1
-    build:
-      context: ./zipkin
-      dockerfile: Dockerfile
-    volumes:
-      - /tmp/cloud
-    ports:
-      - "9411:9411"
-    environment:
-      SERVER_PORT: 9411
-    networks:
-     - backend
-    restart: always
-    deploy:
-     resources:
-      limits: 
-       memory: 32mb
-      reservations:
-       memory: 32mb       
-             
-  eureka-1:
-    image: eureka:1
-    build:
-      context: ./eureka
-      dockerfile: Dockerfile
-    volumes:
-      - /tmp/cloud
-    ports:
-      - "8761:8761"
-    depends_on:
-      - "zipkin"      
-    environment:
-      SERVER_PORT: 8761
-      SPRING_ZIPKIN_BASEURL : http://zipkin:9411/
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-1:8761/eureka/,http://eureka-2:8762/eureka/"
-      EUREKA_CLIENT_SERVICEURL_REGISTER-WITH-EUREKA : "true"
-      EUREKA_CLIENT_SERVICEURL_FETCH-REGISTRY : "true"
-      EUREKA_INSTANCE_HOSTNAME : eureka-1
-      EUREKA_INSTANCE_APPNAME : eureka-cluster
-      
-    networks:
-     - backend
-    restart: always
-    deploy:
-     resources:
-      limits: 
-       memory: 32mb
-      reservations:
-       memory: 32mb
+     - backend      
+
+
+#  configserver:
+#    image: config:1
+#    build:
+#      context: ./configserver
+#      dockerfile: Dockerfile
+#    volumes:
+#      - /tmp/cloud
+#    ports:
+#      - "8889:8888"
+#    environment:
+#      SERVER_PORT : 8888         
+#    networks:
+#     - backend
+#    restart: always
+#       
+#  zipkin:
+#    image: zipkin:1
+#    build:
+#      context: ./zipkin
+#      dockerfile: Dockerfile
+#    volumes:
+#      - /tmp/cloud
+#    ports:
+#      - "9411:9411"
+#    environment:
+#      SERVER_PORT: 9411
+#    networks:
+#     - backend
+#    restart: always
+#             
+#  eureka-1:
+#    image: eureka:1
+#    build:
+#      context: ./eureka
+#      dockerfile: Dockerfile
+#    volumes:
+#      - /tmp/cloud
+#    ports:
+#      - "8761:8761"
+#    depends_on:
+#      - "zipkin"      
+#    environment:
+#      SERVER_PORT: 8761
+#      SPRING_ZIPKIN_BASEURL : http://zipkin:9411/
+#      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-1:8761/eureka/,http://eureka-2:8762/eureka/"
+#      EUREKA_CLIENT_SERVICEURL_REGISTER-WITH-EUREKA : "true"
+#      EUREKA_CLIENT_SERVICEURL_FETCH-REGISTRY : "true"
+#      EUREKA_INSTANCE_HOSTNAME : eureka-1
+#      EUREKA_INSTANCE_APPNAME : eureka-cluster
+#      
+#    networks:
+#     - backend
+#    restart: always
 
 
              
-  eureka-2:
-    image: eureka:1
-    build:
-      context: ./eureka
-      dockerfile: Dockerfile
-    volumes:
-      - /tmp/cloud
-    ports:
-      - "8762:8762"
-    depends_on:
-      - "zipkin"      
-    environment:
-      SERVER_PORT: 8762
-      SPRING_ZIPKIN_BASEURL : http://zipkin:9411/ 
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-1:8761/eureka/,http://eureka-2:8762/eureka/"
-      EUREKA_CLIENT_SERVICEURL_REGISTER-WITH-EUREKA: "true"
-      EUREKA_CLIENT_SERVICEURL_FETCH-REGISTRY: "true"
-      EUREKA_INSTANCE_HOSTNAME: eureka-2
-      EUREKA_INSTANCE_APPNAME: eureka-cluster
-    networks:
-     - backend
-    restart: always
-    deploy:
-     resources:
-      limits: 
-       memory: 32mb
-      reservations:
-       memory: 32mb
+#  eureka-2:
+#    image: eureka:1
+#    build:
+#      context: ./eureka
+#      dockerfile: Dockerfile
+#    volumes:
+#      - /tmp/cloud
+#    ports:
+#      - "8762:8762"
+#    depends_on:
+#      - "zipkin"      
+#    environment:
+#      SERVER_PORT: 8762
+#      SPRING_ZIPKIN_BASEURL : http://zipkin:9411/ 
+#      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-1:8761/eureka/,http://eureka-2:8762/eureka/"
+#      EUREKA_CLIENT_SERVICEURL_REGISTER-WITH-EUREKA: "true"
+#      EUREKA_CLIENT_SERVICEURL_FETCH-REGISTRY: "true"
+#      EUREKA_INSTANCE_HOSTNAME: eureka-2
+#      EUREKA_INSTANCE_APPNAME: eureka-cluster
+#    networks:
+#     - backend
+#    restart: always
 
 
  
-  apigateway:
-    image: apigateway:1
-    build:
-      context: ./apigateway
-      dockerfile: Dockerfile
-    volumes:
-      - /tmp/cloud
-    ports:
-      - "9090:9090"
-    networks:
-     - backend      
-    depends_on:
-      - "configserver"
-      - "zipkin"
-      - "eureka-1"
-      - "eureka-2"
-      - "ms0"
-      - "ms1"
-      - "ms2"
-    environment:
-      SERVER_PORT: 9090
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-1:8761/eureka/,http://eureka-2:8762/eureka/"
-      CLOUD_CONFIG_URI: http://configserver:8888/
-      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
-    restart: always
-    deploy:
-     resources:
-      limits: 
-       memory: 32mb
-      reservations:
-       memory: 32mb
+#  apigateway:
+#    image: apigateway:1
+#    build:
+#      context: ./apigateway
+#      dockerfile: Dockerfile
+#    volumes:
+#      - /tmp/cloud
+#    ports:
+#      - "9090:9090"
+#    networks:
+#     - backend      
+#    depends_on:
+#      - "configserver"
+#      - "zipkin"
+#      - "eureka-1"
+#      - "eureka-2"
+#      - "ms0"
+#      - "ms1"
+#      - "ms2"
+#    environment:
+#      SERVER_PORT: 9090
+#      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-1:8761/eureka/,http://eureka-2:8762/eureka/"
+#      CLOUD_CONFIG_URI: http://configserver:8888/
+#      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
+#    restart: always
            
           
-  ms0:
-    image: ms:1
-    build:
-      context: ./microservice
-      dockerfile: Dockerfile
-    volumes:
-      - /tmp/cloud
-    ports:
-      - "8090"
-    networks:
-     - backend      
-    depends_on:
-      - "configserver"
-      - "zipkin"
-    environment:
-       SERVER_PORT: 8090
-       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-1:8761/eureka/,http://eureka-2:8762/eureka/"
-       CLOUD_CONFIG_URI: http://configserver:8888/
-       SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
-    restart: always
-    deploy:
-     resources:
-      limits: 
-       memory: 32mb
-      reservations:
-       memory: 32mb
+#  ms0:
+#    image: ms:1
+#    build:
+#      context: ./microservice
+#      dockerfile: Dockerfile
+#    volumes:
+#      - /tmp/cloud
+#    ports:
+#      - "8090"
+#    networks:
+#     - backend      
+#    depends_on:
+#      - "configserver"
+#      - "zipkin"
+#    environment:
+#       SERVER_PORT: 8090
+#       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-1:8761/eureka/,http://eureka-2:8762/eureka/"
+#       CLOUD_CONFIG_URI: http://configserver:8888/
+#       SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
+#       SPRING_DB_URL: jdbc:postgresql://db:5432/demo
+#       SPRING_DB_USERNAME: demo
+#       SPRING_DB_PASSWORD:demo
 
-  ms1:
-    image: ms:1
-    build:
-      context: ./microservice
-      dockerfile: Dockerfile
-    volumes:
-      - /tmp/cloud
-    ports:
-      - "8091"
-    networks:
-     - backend      
-    depends_on:
-      - "configserver"
-      - "zipkin"
-    environment:
-       SERVER_PORT: 8091
-       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-1:8761/eureka/,http://eureka-2:8762/eureka/"
-       CLOUD_CONFIG_URI: http://configserver:8888/
-       SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
-    restart: always
-    deploy:
-     resources:
-      limits: 
-       memory: 64mb
-      reservations:
-       memory: 64mb
+#    restart: always
+
+#  ms1:
+#    image: ms:1
+#    build:
+#      context: ./microservice
+#      dockerfile: Dockerfile
+#    volumes:
+#      - /tmp/cloud
+#    ports:
+#      - "8091"
+#    networks:
+#     - backend      
+#    depends_on:
+#      - "configserver"
+#      - "zipkin"
+#    environment:
+#       SERVER_PORT: 8091
+#       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-1:8761/eureka/,http://eureka-2:8762/eureka/"
+#       CLOUD_CONFIG_URI: http://configserver:8888/
+#       SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
+#       SPRING_DB_URL: jdbc:postgresql://db:5432/demo
+#       SPRING_DB_USERNAME: demo
+#       SPRING_DB_PASSWORD:demo
+
+#    restart: always
 
 
-  ms2:
-    image: ms:1
-    build:
-      context: ./microservice
-      dockerfile: Dockerfile
-    volumes:
-      - /tmp/cloud
-    ports:
-      - "8092"
-    networks:
-     - backend      
-    depends_on:
-      - "configserver"
-      - "zipkin"
-    environment:
-       SERVER_PORT: 8092
-       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-1:8761/eureka/,http://eureka-2:8762/eureka/"
-       CLOUD_CONFIG_URI: http://configserver:8888/
-       SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
-    restart: always
-    deploy:
-     resources:
-      limits: 
-       memory: 32mb
-      reservations:
-       memory: 32mb
+#  ms2:
+#    image: ms:1
+#    build:
+#      context: ./microservice
+#      dockerfile: Dockerfile
+#    volumes:
+#      - /tmp/cloud
+#    ports:
+#      - "8092"
+#    networks:
+#     - backend      
+#    depends_on:
+#      - "configserver"
+#      - "zipkin"
+#    environment:
+#       SERVER_PORT: 8092
+#       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-1:8761/eureka/,http://eureka-2:8762/eureka/"
+#       CLOUD_CONFIG_URI: http://configserver:8888/
+#       SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
+#       SPRING_DB_URL: jdbc:postgresql://db:5432/demo
+#       SPRING_DB_USERNAME: demo
+#       SPRING_DB_PASSWORD:demo
+#    restart: always
 
 
-
-  admin:
-    image: admin:1
-    build:
-      context: ./admin
-      dockerfile: Dockerfile
-    volumes:
-      - /tmp/cloud
-    ports:
-      - "8081:8081"
-    environment:
-      SERVER_PORT : 8081
-      SPRING_BOOT_ADMIN_CLINET_URL: "http://admin:8081/"         
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-1:8761/eureka/,http://eureka-2:8762/eureka/"
-    networks:
-     - backend
-    restart: always
-    deploy:
-     resources:
-      limits: 
-       memory: 32mb
-      reservations:
-       memory: 32mb
-  
+#  admin:
+#    image: admin:1
+#    build:
+#      context: ./admin
+#      dockerfile: Dockerfile
+#    volumes:
+#      - /tmp/cloud
+#    ports:
+#      - "8081:8081"
+#    environment:
+#      SERVER_PORT : 8081
+#      SPRING_BOOT_ADMIN_CLINET_URL: "http://admin:8081/"         
+#      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-1:8761/eureka/,http://eureka-2:8762/eureka/"
+#    networks:
+#     - backend
+#    restart: always
+#  
          
 # Networks to be created to facilitate communication between containers
 networks:

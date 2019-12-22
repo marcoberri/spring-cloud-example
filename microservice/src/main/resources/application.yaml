@@ -6,6 +6,19 @@ spring:
   lazy-initialization: true
  application:
   name: ms
+ jpa :
+  database: POSTGRESQL
+  show-sql : true
+  generate-ddl : true
+  hibernate:
+   ddl-auto: update
+  properties.hibernate.jdbc.lob.non_contextual_creation: true
+ datasource:
+  platform: postgres
+  url: ${SPRING_DB_URL:jdbc:postgresql://localhost:5432/demo}
+  username: ${SPRING_DB_USERNAME:demo}
+  password: ${SPRING_DB_PASSWORD:demo}
+
   
 #ZipKin  
  zipkin:
@@ -25,11 +38,14 @@ eureka:
       defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka}
   instance:
     preferIpAddress: true
+  
+
     
 
 security:
  basic:
   enable: false   
+  
 management:
  security:
   enabled: false
