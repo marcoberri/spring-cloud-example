@@ -2,12 +2,15 @@ package it.marcoberri.microservice;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.ExecutionException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.client.RestTemplate;
 
 import com.netflix.appinfo.InstanceInfo;
@@ -28,13 +31,30 @@ public class ProductRestController {
 	@Autowired
 	private RestTemplate restTemplate;
 
-	@GetMapping(value = "/product/{sku}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Product getProductBySku(@PathVariable("sku") String sku) {
-		Product product = new Product();
-		product.setSku(sku);
-		product.setName("Sample Name");
-		product.setPrice(10.45);
-		return product;
+	@Autowired
+	private ProductRespository productRepository;
+
+	/**
+	 * Find by sku 
+	 * @param sku
+	 * @return {@code Product}
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
+	@GetMapping(value = "/product/{sku}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public Product getProductBySku(@PathVariable("sku") String sku) throws InterruptedException, ExecutionException {
+		return productRepository.findOneBySku(sku).get();
+	}
+
+	/**
+	 * Save data
+	 * 
+	 * @param product
+	 * @return {@code Product}
+	 */
+	@PostMapping(value = "/product/", produces = MediaType.APPLICATION_JSON_VALUE)
+	public Product saveProduct(@RequestBody Product product) {
+		return productRepository.save(product);
 	}
 
 	/**
