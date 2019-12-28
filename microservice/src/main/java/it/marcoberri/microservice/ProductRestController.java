@@ -41,9 +41,9 @@ public class ProductRestController {
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 */
-	@GetMapping(value = "/product/{sku}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/product/{sku}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Product getProductBySku(@PathVariable("sku") String sku) throws InterruptedException, ExecutionException {
-		return productRepository.findOneBySku(sku).get();
+		return productRepository.findOneBySku(sku);
 	}
 
 	/**

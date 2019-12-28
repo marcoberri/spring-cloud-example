@@ -1,1 +1,2 @@
-http://localhost:8090/product/1010101
+#Get Product
+http://localhost:8090/product/1010

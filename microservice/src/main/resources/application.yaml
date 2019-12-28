@@ -27,7 +27,7 @@ spring:
  cloud :
 #Config Server
   config :
-   uri: ${CLOUD_CONFIG_URI:http://localhost:8888/}
+   uri: ${SPRING_CONFIG_URL:http://127.0.0.1:8888/}
    fail-fast: true
    retry:
      max-attempts: 20   

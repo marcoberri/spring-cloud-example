@@ -1,6 +1,7 @@
 # spring-cloud-example
-Spring Cloud Example with all component
-
+Esempio di gestione dei microservice
 
 #Docker-compose
 docker volume create --name postgres-data-volume -d local
+docker-compose up --force-recreate --build
+
