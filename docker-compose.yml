@@ -20,7 +20,7 @@ services:
      - backend      
 
   configserver:
-    image: config:1
+    image: tecnicume/config:1
     build:
       context: ./configserver
       dockerfile: Dockerfile
@@ -35,7 +35,7 @@ services:
     restart: always
        
   zipkin:
-    image: zipkin:1
+    image: tecnicume/zipkin:1
     build:
       context: ./zipkin
       dockerfile: Dockerfile
@@ -50,7 +50,7 @@ services:
     restart: always
              
   eureka-node1:
-    image: eureka:1
+    image: tecnicume/eureka:1
     build:
       context: ./eureka
       dockerfile: Dockerfile
@@ -64,7 +64,7 @@ services:
     environment:
       SERVER_PORT: 8761
       SPRING_ZIPKIN_BASEURL : "http://zipkin:9411/"
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-node1:8761/eureka/"
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-node2:8762/eureka/,http://eureka-node1:8761/eureka/"
       EUREKA_CLIENT_SERVICEURL_REGISTER-WITH-EUREKA : "true"
       EUREKA_CLIENT_SERVICEURL_FETCH-REGISTRY : "true"
       EUREKA_INSTANCE_HOSTNAME : eureka-node1
@@ -75,7 +75,7 @@ services:
 
              
   eureka-node2:
-    image: eureka:1
+    image: tecnicume/eureka:1
     build:
       context: ./eureka
       dockerfile: Dockerfile
@@ -90,7 +90,7 @@ services:
     environment:
       SERVER_PORT: 8762
       SPRING_ZIPKIN_BASEURL : "http://zipkin:9411/" 
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-node1:8761/eureka/"
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-node1:8761/eureka/,http://eureka-node2:8762/eureka/"
       EUREKA_CLIENT_SERVICEURL_REGISTER-WITH-EUREKA: "true"
       EUREKA_CLIENT_SERVICEURL_FETCH-REGISTRY: "true"
       EUREKA_INSTANCE_HOSTNAME: eureka-node2
@@ -102,7 +102,7 @@ services:
 
  
   apigateway:
-    image: apigateway:1
+    image: tecnicume/apigateway:1
     build:
       context: ./apigateway
       dockerfile: Dockerfile
@@ -116,28 +116,27 @@ services:
       - "configserver"
       - "zipkin"
       - "eureka-node1"
-#      - "eureka-node2"
+      - "eureka-node2"
       - "ms0"
-#      - "ms1"
-#      - "ms2"
+      - "ms1"
+      - "ms2"
       - "db"     
     environment:
       SERVER_PORT: 9090
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-node1:8761/eureka/"
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-node1:8761/eureka/,http://eureka-node2:8762/eureka/"
       SPRING_CONFIG_URL: "http://configserver:8888/"
       SPRING_ZIPKIN_BASEURL: "http://zipkin:9411/"
     restart: always
-           
-          
-  ms0:
-    image: ms:1
+                     
+  ms:
+    image: tecnicume/ms:1
     build:
       context: ./microservice
       dockerfile: Dockerfile
     volumes:
       - /tmp/cloud
     ports:
-      - "8090"
+      - "8090:8090"
     networks:
      - backend      
     depends_on:
@@ -146,69 +145,19 @@ services:
       - "db"      
     environment:
        SERVER_PORT: 8090
-       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-node1:8761/eureka/"
+       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-node1:8761/eureka/,http://eureka-node2:8762/eureka/"
        SPRING_CONFIG_URL: "http://configserver:8888/"
        SPRING_ZIPKIN_BASEURL: "http://zipkin:9411/"
        SPRING_DB_URL: "jdbc:postgresql://db:5432/demo"
        SPRING_DB_USERNAME: demo
        SPRING_DB_PASSWORD: demo
     restart: always
-
-  ms1:
-    image: ms:1
-    build:
-      context: ./microservice
-      dockerfile: Dockerfile
-    volumes:
-      - /tmp/cloud
-    ports:
-      - "8091"
-    networks:
-     - backend      
-    depends_on:
-      - "configserver"
-      - "zipkin"
-      - "db"      
-      - "eureka-node1"
-    environment:
-       SERVER_PORT: 8091
-       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-node1:8761/eureka/"
-       SPRING_CONFIG_URI: "http://configserver:8888/"
-       SPRING_ZIPKIN_BASEURL: "http://zipkin:9411/"
-       SPRING_DB_URL: "jdbc:postgresql://db:5432/demo"
-       SPRING_DB_USERNAME: demo
-       SPRING_DB_PASSWORD: demo
-    restart: always
-
-
-#  ms2:
-#    image: ms:1
-#    build:
-#      context: ./microservice
-#      dockerfile: Dockerfile
-#    volumes:
-#      - /tmp/cloud
-#    ports:
-#      - "8092"
-#    networks:
-#     - backend      
-#    depends_on:
-#      - "configserver"
-#      - "zipkin"
-#      - "db"
-#    environment:
-#       SERVER_PORT: 8092
-#       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-node1:8761/eureka/,http://eureka-node2:8762/eureka/"
-#       CLOUD_CONFIG_URI: http://configserver:8888/
-#       SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
-#       SPRING_DB_URL: jdbc:postgresql://db:5432/demo
-#       SPRING_DB_USERNAME: demo
-#       SPRING_DB_PASSWORD: demo
-#    restart: always
-
+    #For swarm replica
+    deploy:
+      replicas: 6
 
   admin:
-    image: admin:1
+    image: tecnicume/admin:1
     build:
       context: ./admin
       dockerfile: Dockerfile
@@ -219,7 +168,7 @@ services:
     environment:
       SERVER_PORT : 8081
       SPRING_BOOT_ADMIN_CLIENT_URL: "http://admin:8081/"         
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-node1:8761/eureka"
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-node1:8761/eureka/,http://eureka-node2:8762/eureka/"
     networks:
      - backend
     restart: always
