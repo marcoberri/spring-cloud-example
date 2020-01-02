@@ -117,9 +117,6 @@ services:
       - "zipkin"
       - "eureka-node1"
       - "eureka-node2"
-      - "ms0"
-      - "ms1"
-      - "ms2"
       - "db"     
     environment:
       SERVER_PORT: 9090
