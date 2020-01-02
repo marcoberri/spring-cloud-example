@@ -11,7 +11,7 @@
 	
 	
 	<artifactId>configserver</artifactId>
-	<name>configserver</name>
+	<name>ConfigServer</name>
 	<description>ConfigServer for MS</description>
 
 

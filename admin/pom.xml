@@ -8,7 +8,7 @@
 	<artifactId>admin</artifactId>
 	<packaging>jar</packaging>
 
-	<name>Admin</name>
+	<name>AdminBoot</name>
 
 	<parent>
 		<groupId>it.marcoberri</groupId>

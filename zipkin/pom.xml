@@ -7,8 +7,8 @@
 	<artifactId>zipkin-server</artifactId>
 	<version>0.0.1</version>
 	<packaging>jar</packaging>
-	<name>zipkin-server</name>
-	<description>Demo project for Spring Boot</description>
+	<name>ZipKin</name>
+	<description>Zipkin server</description>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
