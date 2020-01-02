@@ -38,9 +38,6 @@ eureka:
       defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka}
   instance:
     preferIpAddress: true
-  
-
-    
 
 security:
  basic:
@@ -49,7 +46,11 @@ security:
 management:
  security:
   enabled: false
-  
+ endpoints:
+  web:
+    exposure:
+      include: "*"  
+
 service:
  ms:
   serviceId: ms
