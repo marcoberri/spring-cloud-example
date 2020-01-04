@@ -30,6 +30,20 @@ services:
       - "8888:8888"
     environment:
       SERVER_PORT : 8888         
+      JAVA_OPTS: >
+          -XX:+UnlockExperimentalVMOptions
+          -XX:+UseCGroupMemoryLimitForHeap
+          -XX:InitialRAMFraction=2
+          -XX:MaxRAMFraction=2
+          -XX:ParallelGCThreads=2
+          -XX:ConcGCThreads=2
+          -XX:CICompilerCount=2
+          -Djava.util.concurrent.ForkJoinPool.common.parallelism=3
+    deploy:
+        resources:
+          limits:
+            memory: 512M
+            cpus: '2'      
     networks:
      - backend
     restart: always
@@ -45,6 +59,20 @@ services:
       - "9411:9411"
     environment:
       SERVER_PORT: 9411
+      JAVA_OPTS: >
+          -XX:+UnlockExperimentalVMOptions
+          -XX:+UseCGroupMemoryLimitForHeap
+          -XX:InitialRAMFraction=2
+          -XX:MaxRAMFraction=2
+          -XX:ParallelGCThreads=2
+          -XX:ConcGCThreads=2
+          -XX:CICompilerCount=2
+          -Djava.util.concurrent.ForkJoinPool.common.parallelism=3
+    deploy:
+        resources:
+          limits:
+            memory: 512M
+            cpus: '2'      
     networks:
      - backend
     restart: always
@@ -69,6 +97,21 @@ services:
       EUREKA_CLIENT_SERVICEURL_FETCH-REGISTRY : "true"
       EUREKA_INSTANCE_HOSTNAME : eureka-node1
       EUREKA_INSTANCE_APPNAME : eureka-cluster
+      JAVA_OPTS: >
+          -XX:+UnlockExperimentalVMOptions
+          -XX:+UseCGroupMemoryLimitForHeap
+          -XX:InitialRAMFraction=2
+          -XX:MaxRAMFraction=2
+          -XX:ParallelGCThreads=2
+          -XX:ConcGCThreads=2
+          -XX:CICompilerCount=2
+          -Djava.util.concurrent.ForkJoinPool.common.parallelism=3
+    deploy:
+        resources:
+          limits:
+            memory: 512M
+            cpus: '2'      
+
     networks:
      - backend
     restart: always
@@ -95,6 +138,21 @@ services:
       EUREKA_CLIENT_SERVICEURL_FETCH-REGISTRY: "true"
       EUREKA_INSTANCE_HOSTNAME: eureka-node2
       EUREKA_INSTANCE_APPNAME: eureka-cluster
+      JAVA_OPTS: >
+          -XX:+UnlockExperimentalVMOptions
+          -XX:+UseCGroupMemoryLimitForHeap
+          -XX:InitialRAMFraction=2
+          -XX:MaxRAMFraction=2
+          -XX:ParallelGCThreads=2
+          -XX:ConcGCThreads=2
+          -XX:CICompilerCount=2
+          -Djava.util.concurrent.ForkJoinPool.common.parallelism=3
+    deploy:
+        resources:
+          limits:
+            memory: 512M
+            cpus: '2'      
+
     networks:
      - backend
     restart: always
@@ -123,6 +181,21 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-node1:8761/eureka/,http://eureka-node2:8762/eureka/"
       SPRING_CONFIG_URL: "http://configserver:8888/"
       SPRING_ZIPKIN_BASEURL: "http://zipkin:9411/"
+      JAVA_OPTS: >
+          -XX:+UnlockExperimentalVMOptions
+          -XX:+UseCGroupMemoryLimitForHeap
+          -XX:InitialRAMFraction=2
+          -XX:MaxRAMFraction=2
+          -XX:ParallelGCThreads=2
+          -XX:ConcGCThreads=2
+          -XX:CICompilerCount=2
+          -Djava.util.concurrent.ForkJoinPool.common.parallelism=3
+    deploy:
+        resources:
+          limits:
+            memory: 512M
+            cpus: '2'      
+
     restart: always
                      
   ms:
@@ -148,10 +221,24 @@ services:
        SPRING_DB_URL: "jdbc:postgresql://db:5432/demo"
        SPRING_DB_USERNAME: demo
        SPRING_DB_PASSWORD: demo
+       JAVA_OPTS: >
+          -XX:+UnlockExperimentalVMOptions
+          -XX:+UseCGroupMemoryLimitForHeap
+          -XX:InitialRAMFraction=2
+          -XX:MaxRAMFraction=2
+          -XX:ParallelGCThreads=2
+          -XX:ConcGCThreads=2
+          -XX:CICompilerCount=2
+          -Djava.util.concurrent.ForkJoinPool.common.parallelism=3
     restart: always
-    #For swarm replica
+ 
     deploy:
-      replicas: 3
+    #For swarm replica
+      replicas: 2
+      resources:
+        limits:
+          memory: 512M
+          cpus: '2'      
 
   admin:
     image: tecnicume/admin:1
@@ -166,6 +253,21 @@ services:
       SERVER_PORT : 8081
       SPRING_BOOT_ADMIN_CLIENT_URL: "http://admin:8081/"         
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-node1:8761/eureka/,http://eureka-node2:8762/eureka/"
+      JAVA_OPTS: >
+          -XX:+UnlockExperimentalVMOptions
+          -XX:+UseCGroupMemoryLimitForHeap
+          -XX:InitialRAMFraction=2
+          -XX:MaxRAMFraction=2
+          -XX:ParallelGCThreads=2
+          -XX:ConcGCThreads=2
+          -XX:CICompilerCount=2
+          -Djava.util.concurrent.ForkJoinPool.common.parallelism=3
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '2'      
+
     networks:
      - backend
     restart: always
