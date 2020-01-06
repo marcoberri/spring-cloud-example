@@ -38,6 +38,6 @@ logging:
  level: 
   com:
    netflix:
-    eureka: DEBUG
-    discovery: DEBUG
+    eureka: TRACE
+    discovery: TRACE
        

@@ -17,7 +17,6 @@ server:
    product-service:
     path: /product/**
     serviceId: ms
-    stripPrefix: true
       
  
 eureka:
@@ -35,4 +34,7 @@ management:
       exposure:
         include: "*"
     
-    
+logging:
+  level:
+    com.netflix: 'TRACE'
+    org.springframework.cloud: 'TRACE'

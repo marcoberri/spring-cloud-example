@@ -11,7 +11,7 @@
 	</parent>
 
 	<artifactId>apigateway</artifactId>
-	<name>apigateway</name>
+	<name>ApiGateway</name>
 	<description>ApiGateway</description>
 
 	<dependencies>

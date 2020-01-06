@@ -40,4 +40,7 @@ spring:
   user:
    name: demo
    password: demo
-      
+
+logging:
+  level:
+    org: TRACE

@@ -9,7 +9,8 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.EventListener;
 
-import zipkin2.server.internal.EnableZipkinServer;
+import zipkin.server.EnableZipkinServer;
+
 
 @SpringBootApplication
 @EnableZipkinServer
